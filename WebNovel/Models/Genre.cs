@@ -11,5 +11,5 @@ public partial class Genre
 
     public string GenreDescription { get; set; } = null!;
 
-    public virtual ICollection<NovelGenre> NovelGenres { get; } = new List<NovelGenre>();
+    public virtual ICollection<Novel> Novels { get; } = new List<Novel>();
 }

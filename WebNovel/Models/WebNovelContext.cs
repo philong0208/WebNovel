@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebNovel.Models;
 
-public partial class NovelReaderContext : DbContext
+public partial class WebNovelContext : DbContext
 {
-    public NovelReaderContext()
+    public WebNovelContext()
     {
     }
 
-    public NovelReaderContext(DbContextOptions<NovelReaderContext> options)
+    public WebNovelContext(DbContextOptions<WebNovelContext> options)
         : base(options)
     {
     }
@@ -23,8 +23,6 @@ public partial class NovelReaderContext : DbContext
 
     public virtual DbSet<Novel> Novels { get; set; }
 
-    public virtual DbSet<NovelGenre> NovelGenres { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -35,17 +33,15 @@ public partial class NovelReaderContext : DbContext
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=PHILONG;Initial Catalog=NOVEL_READER;User ID=sa;Password=123");
+//        => optionsBuilder.UseSqlServer("Data Source=PHILONG;Initial Catalog=WEB_NOVEL;User ID=sa;Password=123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Author>(entity =>
         {
-            entity.ToTable("Author");
+            entity.ToTable("AUTHOR");
 
-            entity.Property(e => e.AuthorId)
-                .ValueGeneratedNever()
-                .HasColumnName("Author_ID");
+            entity.Property(e => e.AuthorId).HasColumnName("Author_ID");
             entity.Property(e => e.AuthorName)
                 .HasMaxLength(50)
                 .HasColumnName("Author_Name");
@@ -53,32 +49,30 @@ public partial class NovelReaderContext : DbContext
 
         modelBuilder.Entity<Chapter>(entity =>
         {
-            entity.ToTable("Chapter");
+            entity.ToTable("CHAPTER");
 
-            entity.Property(e => e.ChapterId)
-                .ValueGeneratedNever()
-                .HasColumnName("Chapter_ID");
+            entity.Property(e => e.ChapterId).HasColumnName("Chapter_ID");
             entity.Property(e => e.ChapterContent)
-                .HasColumnType("text")
+                .HasColumnType("ntext")
                 .HasColumnName("Chapter_Content");
-            entity.Property(e => e.DatePost)
+            entity.Property(e => e.ChapterDatePost)
                 .HasColumnType("date")
-                .HasColumnName("Date_Post");
+                .HasColumnName("Chapter_DatePost");
+            entity.Property(e => e.ChapterTitle)
+                .HasMaxLength(500)
+                .HasColumnName("Chapter_Title");
             entity.Property(e => e.NovelId).HasColumnName("Novel_ID");
-            entity.Property(e => e.Title).HasMaxLength(50);
 
             entity.HasOne(d => d.Novel).WithMany(p => p.Chapters)
                 .HasForeignKey(d => d.NovelId)
-                .HasConstraintName("FK_Chapter_Novel");
+                .HasConstraintName("FK_CHAPTER_NOVEL");
         });
 
         modelBuilder.Entity<Genre>(entity =>
         {
-            entity.ToTable("Genre");
+            entity.ToTable("GENRE");
 
-            entity.Property(e => e.GenreId)
-                .ValueGeneratedNever()
-                .HasColumnName("Genre_ID");
+            entity.Property(e => e.GenreId).HasColumnName("Genre_ID");
             entity.Property(e => e.GenreDescription)
                 .HasMaxLength(100)
                 .HasColumnName("Genre_Description");
@@ -89,101 +83,102 @@ public partial class NovelReaderContext : DbContext
 
         modelBuilder.Entity<Novel>(entity =>
         {
-            entity.ToTable("Novel");
+            entity.ToTable("NOVEL");
 
-            entity.Property(e => e.NovelId)
-                .ValueGeneratedNever()
-                .HasColumnName("Novel_ID");
+            entity.Property(e => e.NovelId).HasColumnName("Novel_ID");
             entity.Property(e => e.AuthorId).HasColumnName("Author_ID");
-            entity.Property(e => e.Cover).HasColumnType("image");
-            entity.Property(e => e.DatePost)
+            entity.Property(e => e.NovelCover)
+                .HasMaxLength(1000)
+                .HasColumnName("Novel_Cover");
+            entity.Property(e => e.NovelDatePost)
                 .HasColumnType("date")
-                .HasColumnName("Date_Post");
-            entity.Property(e => e.Description).HasMaxLength(256);
-            entity.Property(e => e.Title).HasMaxLength(50);
+                .HasColumnName("Novel_DatePost");
+            entity.Property(e => e.NovelDescription)
+                .HasMaxLength(500)
+                .HasColumnName("Novel_Description");
+            entity.Property(e => e.NovelTitle)
+                .HasMaxLength(100)
+                .HasColumnName("Novel_Title");
+            entity.Property(e => e.NovelView).HasColumnName("Novel_View");
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .HasColumnName("User_ID");
 
             entity.HasOne(d => d.Author).WithMany(p => p.Novels)
                 .HasForeignKey(d => d.AuthorId)
-                .HasConstraintName("FK_Novel_Author");
-
-            entity.HasOne(d => d.NovelNavigation).WithOne(p => p.Novel)
-                .HasForeignKey<Novel>(d => d.NovelId)
-                .HasConstraintName("FK_Novel_Novel_Genre");
+                .HasConstraintName("FK_NOVEL_AUTHOR");
 
             entity.HasOne(d => d.User).WithMany(p => p.Novels)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_Novel_User");
-        });
+                .HasConstraintName("FK_NOVEL_USER");
 
-        modelBuilder.Entity<NovelGenre>(entity =>
-        {
-            entity.HasKey(e => e.NovelId);
-
-            entity.ToTable("Novel_Genre");
-
-            entity.Property(e => e.NovelId)
-                .ValueGeneratedNever()
-                .HasColumnName("Novel_ID");
-            entity.Property(e => e.GenreId).HasColumnName("Genre_ID");
-
-            entity.HasOne(d => d.Genre).WithMany(p => p.NovelGenres)
-                .HasForeignKey(d => d.GenreId)
-                .HasConstraintName("FK_Novel_Genre_Genre");
+            entity.HasMany(d => d.Genres).WithMany(p => p.Novels)
+                .UsingEntity<Dictionary<string, object>>(
+                    "NovelGenre",
+                    r => r.HasOne<Genre>().WithMany()
+                        .HasForeignKey("GenreId")
+                        .HasConstraintName("FK_NOVEL_GENRE_GENRE"),
+                    l => l.HasOne<Novel>().WithMany()
+                        .HasForeignKey("NovelId")
+                        .HasConstraintName("FK_NOVEL_GENRE_NOVEL"),
+                    j =>
+                    {
+                        j.HasKey("NovelId", "GenreId");
+                        j.ToTable("NOVEL_GENRE");
+                        j.IndexerProperty<int>("NovelId").HasColumnName("Novel_ID");
+                        j.IndexerProperty<int>("GenreId").HasColumnName("Genre_ID");
+                    });
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
             entity.ToTable("ROLE");
 
-            entity.Property(e => e.RoleId)
-                .ValueGeneratedNever()
-                .HasColumnName("Role_ID");
+            entity.Property(e => e.RoleId).HasColumnName("Role_ID");
             entity.Property(e => e.RoleName)
-                .HasMaxLength(20)
+                .HasMaxLength(50)
                 .HasColumnName("Role_Name");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.ToTable("User");
+            entity.ToTable("USER");
 
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .HasColumnName("User_ID");
-            entity.Property(e => e.Email).HasMaxLength(50);
-            entity.Property(e => e.Password).HasMaxLength(20);
             entity.Property(e => e.RoleId).HasColumnName("Role_ID");
+            entity.Property(e => e.UserEmail)
+                .HasMaxLength(50)
+                .HasColumnName("User_Email");
             entity.Property(e => e.UserName)
                 .HasMaxLength(50)
                 .HasColumnName("User_Name");
+            entity.Property(e => e.UserPassword)
+                .HasMaxLength(20)
+                .HasColumnName("User_Password");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_User_ROLE");
+                .HasConstraintName("FK_USER_ROLE");
         });
 
         modelBuilder.Entity<UserComment>(entity =>
         {
             entity.HasKey(e => e.CommentId);
 
-            entity.ToTable("User_Comment");
+            entity.ToTable("USER_COMMENT");
 
-            entity.Property(e => e.CommentId)
-                .ValueGeneratedNever()
-                .HasColumnName("Comment_ID");
+            entity.Property(e => e.CommentId).HasColumnName("Comment_ID");
             entity.Property(e => e.CommentContent)
-                .HasMaxLength(500)
+                .HasColumnType("ntext")
                 .HasColumnName("Comment_Content");
-            entity.Property(e => e.DateEdit)
+            entity.Property(e => e.CommentDateEdit)
                 .HasColumnType("date")
-                .HasColumnName("Date_Edit");
-            entity.Property(e => e.DatePost)
+                .HasColumnName("Comment_DateEdit");
+            entity.Property(e => e.CommentDatePost)
                 .HasColumnType("date")
-                .HasColumnName("Date_Post");
+                .HasColumnName("Comment_DatePost");
             entity.Property(e => e.NovelId).HasColumnName("Novel_ID");
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
@@ -192,30 +187,28 @@ public partial class NovelReaderContext : DbContext
             entity.HasOne(d => d.Novel).WithMany(p => p.UserComments)
                 .HasForeignKey(d => d.NovelId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_User_Comment_Novel");
+                .HasConstraintName("FK_USER_COMMENT_NOVEL");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserComments)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_User_Comment_User");
+                .HasConstraintName("FK_USER_COMMENT_USER");
         });
 
         modelBuilder.Entity<UserRating>(entity =>
         {
             entity.HasKey(e => e.RatingId);
 
-            entity.ToTable("User_Rating");
+            entity.ToTable("USER_RATING");
 
-            entity.Property(e => e.RatingId)
-                .ValueGeneratedNever()
-                .HasColumnName("Rating_ID");
-            entity.Property(e => e.DateEdit)
-                .HasColumnType("date")
-                .HasColumnName("Date_Edit");
-            entity.Property(e => e.DatePost)
-                .HasColumnType("date")
-                .HasColumnName("Date_Post");
+            entity.Property(e => e.RatingId).HasColumnName("Rating_ID");
             entity.Property(e => e.NovelId).HasColumnName("Novel_ID");
+            entity.Property(e => e.RatingDateEdit)
+                .HasColumnType("date")
+                .HasColumnName("Rating_DateEdit");
+            entity.Property(e => e.RatingDatePost)
+                .HasColumnType("date")
+                .HasColumnName("Rating_DatePost");
+            entity.Property(e => e.RatingScore).HasColumnName("Rating_Score");
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .HasColumnName("User_ID");
@@ -223,12 +216,11 @@ public partial class NovelReaderContext : DbContext
             entity.HasOne(d => d.Novel).WithMany(p => p.UserRatings)
                 .HasForeignKey(d => d.NovelId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_User_Rating_Novel");
+                .HasConstraintName("FK_USER_RATING_NOVEL");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserRatings)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_User_Rating_User");
+                .HasConstraintName("FK_USER_RATING_USER");
         });
 
         OnModelCreatingPartial(modelBuilder);
