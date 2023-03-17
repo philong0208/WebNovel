@@ -6,6 +6,7 @@ namespace WebNovel.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly WebNovelContext _context;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -15,6 +16,7 @@ namespace WebNovel.Controllers
 
         public IActionResult Index()
         {
+            
             return View();
         }
 
@@ -28,5 +30,11 @@ namespace WebNovel.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        //public IEnumerable<Novel> getListNovel()
+        //{
+        //    var list = new List<Novel>();
+        //    return list;
+        //}
     }
 }

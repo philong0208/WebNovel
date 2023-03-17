@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebNovel.Models;
 
 public partial class User
 {
+    [DisplayName("Tên đăng nhập")]
     public string UserId { get; set; } = null!;
 
+    [DisplayName("Họ và tên")]
     public string UserName { get; set; } = null!;
 
+    [DisplayName("Mật khẩu")]
     public string UserPassword { get; set; } = null!;
 
+    [DisplayName("Email")]
     public string UserEmail { get; set; } = null!;
 
     public int RoleId { get; set; }

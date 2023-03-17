@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using WebNovel.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using WebNovel.Repositories.Abstract;
+using WebNovel.Repositories.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<WebNovelContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+builder.Services.AddAuthentication(
+    CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(option =>
+    {
+        option.LoginPath = "/Access/Login";
+        option.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    });
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+//    .AddUserStore<WebNovelContext>()
+//    .AddDefaultTokenProviders();
+//builder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Access/Login");
+//builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
 var app = builder.Build();
 
@@ -23,6 +39,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

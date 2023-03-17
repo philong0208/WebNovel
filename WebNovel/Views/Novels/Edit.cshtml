@@ -1,0 +1,61 @@
+﻿@model WebNovel.Models.Novel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Novel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="NovelId" />
+            <div class="form-group">
+                <label asp-for="NovelTitle" class="control-label"></label>
+                <input asp-for="NovelTitle" class="form-control" />
+                <span asp-validation-for="NovelTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NovelDescription" class="control-label"></label>
+                <input asp-for="NovelDescription" class="form-control" />
+                <span asp-validation-for="NovelDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NovelCover" class="control-label"></label>
+                <input asp-for="NovelCover" class="form-control" />
+                <span asp-validation-for="NovelCover" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NovelDatePost" class="control-label"></label>
+                <input asp-for="NovelDatePost" class="form-control" />
+                <span asp-validation-for="NovelDatePost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NovelView" class="control-label"></label>
+                <input asp-for="NovelView" class="form-control" />
+                <span asp-validation-for="NovelView" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AuthorId" class="control-label"></label>
+                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+                <span asp-validation-for="AuthorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
