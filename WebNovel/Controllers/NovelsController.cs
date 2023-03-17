@@ -48,7 +48,7 @@ namespace WebNovel.Controllers
         // GET: Novels/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId");
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName");
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
             return View();
         }
@@ -66,7 +66,7 @@ namespace WebNovel.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", novel.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novel.AuthorId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
             return View(novel);
         }
