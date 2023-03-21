@@ -79,12 +79,12 @@ namespace WebNovel.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                    ModelState.AddModelError("", "Không thể thêm.Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
                 }
             }
             catch (RetryLimitExceededException ex)
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                ModelState.AddModelError("", "Không thể thêm. Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novelVM.AuthorID);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novelVM.UserID);
@@ -121,13 +121,16 @@ namespace WebNovel.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EditNovelViewModel novelVM)
-        {
+        { /* Nên tạo mới View Model để thực hiện input/edit trên view. 
+            Không nên dùng entity vì khi kiểm tra ModelState các trường chưa input/edit sẽ bị null dẫn đến invalid ModelState
+            */
             if (id != novelVM.NovelID)
             {
                 return NotFound();
             }
             Novel novel = new Novel();
-            novel = _context.Novels.Find(novelVM.NovelID);
+            novel = _context.Novels.Find(novelVM.NovelID); /* Vì dùng ModelState nên phải lấy data vào entity rồi edit.
+                                                            * Nếu không, các trường chưa có thông tin sẽ bị null*/
             if (ModelState.IsValid)
             {
                 //novel.NovelId = novelVM.NovelID;
