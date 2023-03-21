@@ -7,10 +7,10 @@ namespace WebNovel.Models
     {
         [DisplayName("Tên Đăng nhập")]
         [Required]
-        public String userID { get; set; }
+        public string userID { get; set; }
         [DisplayName("Mật khẩu")]
         [Required]
-        public String password { get; set; }
+        public string password { get; set; }
         [DisplayName("Duy trì đăng nhập")]
         public bool keepLoggedIn { get; set; }
     }

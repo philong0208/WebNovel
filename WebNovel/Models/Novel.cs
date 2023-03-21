@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebNovel.Models;
 
 public partial class Novel
 {
+    [Key]
     public int NovelId { get; set; }
 
     public string NovelTitle { get; set; } = null!;
@@ -13,9 +15,9 @@ public partial class Novel
 
     public string NovelCover { get; set; } = null!;
 
-    public DateTime NovelDatePost { get; set; }
+    public DateTime NovelDatePost { get; set; } = DateTime.Now;
 
-    public int NovelView { get; set; }
+    public int NovelView { get; set; } = 1;
 
     public int AuthorId { get; set; }
 

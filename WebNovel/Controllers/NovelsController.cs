@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using WebNovel.Models;
+using WebNovel.Models.ViewModels;
 
 namespace WebNovel.Controllers
 {
@@ -48,8 +51,8 @@ namespace WebNovel.Controllers
         // GET: Novels/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
+            ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName");
+            ViewBag.UserId = new SelectList(_context.Users, "UserId", "UserId");
             return View();
         }
 
@@ -58,16 +61,33 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NovelId,NovelTitle,NovelDescription,NovelCover,NovelDatePost,NovelView,AuthorId,UserId")] Novel novel)
+        public async Task<IActionResult> Create(CreateNovelViewModel novelVM)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(novel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            Novel novel = new Novel();
+            try
+            { 
+                if (ModelState.IsValid)
+                {
+                    novel.NovelTitle = novelVM.NovelTitle;
+                    novel.NovelCover = novelVM.NovelCover;
+                    novel.NovelDescription = novelVM.NovelDescription;
+                    novel.AuthorId = novelVM.AuthorID;
+                    novel.UserId = novelVM.UserID;
+                    _context.Add(novel);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                }
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novel.AuthorId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
+            catch (RetryLimitExceededException ex)
+            {
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+            }
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novelVM.AuthorID);
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novelVM.UserID);
             return View(novel);
         }
 
@@ -84,9 +104,15 @@ namespace WebNovel.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", novel.AuthorId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
-            return View(novel);
+            var novelVM = new EditNovelViewModel();
+            novelVM.NovelID = novel.NovelId;
+            novelVM.NovelTitle = novel.NovelTitle;
+            novelVM.NovelCover = novel.NovelCover;
+            novelVM.NovelDescription = novel.NovelDescription;
+            novelVM.AuthorID = novel.AuthorId;
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novel.AuthorId);
+            //ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
+            return View(novelVM);
         }
 
         // POST: Novels/Edit/5
@@ -94,15 +120,21 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NovelId,NovelTitle,NovelDescription,NovelCover,NovelDatePost,NovelView,AuthorId,UserId")] Novel novel)
+        public async Task<IActionResult> Edit(int id, EditNovelViewModel novelVM)
         {
-            if (id != novel.NovelId)
+            if (id != novelVM.NovelID)
             {
                 return NotFound();
             }
-
+            Novel novel = new Novel();
+            novel = _context.Novels.Find(novelVM.NovelID);
             if (ModelState.IsValid)
             {
+                //novel.NovelId = novelVM.NovelID;
+                novel.NovelTitle = novelVM.NovelTitle;
+                novel.NovelDescription = novelVM.NovelDescription;
+                novel.NovelCover = novelVM.NovelCover;
+                novel.AuthorId = novelVM.AuthorID;
                 try
                 {
                     _context.Update(novel);
@@ -122,8 +154,8 @@ namespace WebNovel.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", novel.AuthorId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
-            return View(novel);
+            //ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
+            return View(novelVM);
         }
 
         // GET: Novels/Delete/5
