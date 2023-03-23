@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4 p-3">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="NovelTitle" class="control-label"></label>
@@ -22,11 +22,11 @@
                 <input asp-for="NovelDescription" class="form-control" />
                 <span asp-validation-for="NovelDescription" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="NovelCover" class="control-label"></label>
-                <input asp-for="NovelCover" class="form-control" />
+                <input asp-for="NovelCover" type="file" class="form-control" />
                 <span asp-validation-for="NovelCover" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="AuthorID" class="control-label"></label>
                 <select asp-for="AuthorID" class ="form-control" asp-items="ViewBag.AuthorId"></select>
@@ -35,6 +35,11 @@
                 <label asp-for="UserID" class="control-label"></label>
                 <select asp-for="UserID" class ="form-control" asp-items="ViewBag.UserId"></select>
             </div>
+            <div class="form-group">
+                <label asp-for="GenreId" class="control-label"></label>
+                <select id="multiple" asp-for="GenreId" multiple="multiple" class="form-control" asp-items="ViewBag.GenreId" placeholder="Chọn thể loại members"></select>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

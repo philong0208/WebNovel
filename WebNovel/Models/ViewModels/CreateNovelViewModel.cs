@@ -9,12 +9,14 @@ namespace WebNovel.Models.ViewModels
         public String NovelTitle { get; set; }
         [Required]
         public String NovelDescription { get; set; }
-        [Required]
-        public String NovelCover { get; set; }
+        //[Required]
+        //public string NovelCover { get; set; }
 
         [Required]
         public string UserID { get; set; }
         [Required]
         public int AuthorID { get; set; }
+        [Required]
+        public List<int> GenreId { get; set; }
     }
 }

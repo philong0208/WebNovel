@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebNovel.Models;
+using WebNovel.Models.ViewModels;
 
 namespace WebNovel.Controllers
 {
@@ -47,8 +48,9 @@ namespace WebNovel.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId");
-            return View();
+            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName");
+            UserViewModel userVM = new UserViewModel();
+            return View(userVM);
         }
 
         // POST: Users/Create
@@ -56,10 +58,17 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,UserName,UserPassword,UserEmail,RoleId")] User user)
+        public async Task<IActionResult> Create(UserViewModel userVM)
         {
+            User user = new User();
             if (ModelState.IsValid)
             {
+                user.UserId = userVM.UserID;
+                user.UserEmail = userVM.Email;
+                user.UserName = userVM.UserName;
+                user.UserPassword = CreateMD5("1234");
+                user.RoleId = userVM.RoleID;
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -90,13 +99,14 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("UserId,UserName,UserPassword,UserEmail,RoleId")] User user)
+        public async Task<IActionResult> Edit(string id,UserViewModel userVM)
         {
-            if (id != user.UserId)
+            if (id != userVM.UserID)
             {
                 return NotFound();
             }
 
+            User user = new User();
             if (ModelState.IsValid)
             {
                 try
@@ -162,6 +172,26 @@ namespace WebNovel.Controllers
         private bool UserExists(string id)
         {
           return _context.Users.Any(e => e.UserId == id);
+        }
+
+        public static string CreateMD5(string input)
+        {
+            // Use input string to calculate MD5 hash
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                return Convert.ToHexString(hashBytes); // .NET 5 +
+
+                // Convert the byte array to hexadecimal string prior to .NET 5
+                // StringBuilder sb = new System.Text.StringBuilder();
+                // for (int i = 0; i < hashBytes.Length; i++)
+                // {
+                //     sb.Append(hashBytes[i].ToString("X2"));
+                // }
+                // return sb.ToString();
+            }
         }
     }
 }

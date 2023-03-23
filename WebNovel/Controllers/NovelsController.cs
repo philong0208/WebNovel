@@ -49,10 +49,12 @@ namespace WebNovel.Controllers
         }
 
         // GET: Novels/Create
+        [HttpGet]
         public IActionResult Create()
         {
             ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName");
             ViewBag.UserId = new SelectList(_context.Users, "UserId", "UserId");
+            ViewBag.GenreId = new SelectList(_context.Genres, "GenreId", "GenreName");
             return View();
         }
 
@@ -61,18 +63,31 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //[DisableRequestSizeLimit]
+        //[RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> Create(CreateNovelViewModel novelVM)
         {
             Novel novel = new Novel();
             try
-            { 
+            {
                 if (ModelState.IsValid)
                 {
+                    
+                    //byte[] uploadedFile = new byte[novelVM.NovelCover.Length];
                     novel.NovelTitle = novelVM.NovelTitle;
-                    novel.NovelCover = novelVM.NovelCover;
+                    novel.NovelCover = "";
                     novel.NovelDescription = novelVM.NovelDescription;
                     novel.AuthorId = novelVM.AuthorID;
                     novel.UserId = novelVM.UserID;
+                    List<int> list = novelVM.GenreId;
+
+                    foreach (var genreId in list)
+                    {
+                        var genre = new Genre();
+                        genre.GenreId = genreId;
+                        novel.Genres.Add(genre);
+                    }
+                    _context.Novels.Attach(novel).State = EntityState.Added;
                     _context.Add(novel);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -82,12 +97,13 @@ namespace WebNovel.Controllers
                     ModelState.AddModelError("", "Không thể thêm.Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
                 }
             }
-            catch (RetryLimitExceededException ex)
+            catch (DbUpdateException ex)
             {
                 ModelState.AddModelError("", "Không thể thêm. Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novelVM.AuthorID);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novelVM.UserID);
+            ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName", novelVM.AuthorID);
+            ViewBag.UserId = new SelectList(_context.Users, "UserId", "UserId", novelVM.UserID);
+            ViewBag.GenreId = new SelectList(_context.Genres, "GenreId", "GenreName");
             return View(novel);
         }
 
@@ -204,5 +220,6 @@ namespace WebNovel.Controllers
         {
           return _context.Novels.Any(e => e.NovelId == id);
         }
+
     }
 }
