@@ -123,10 +123,10 @@ namespace WebNovel.Controllers
             var novelVM = new EditNovelViewModel();
             novelVM.NovelID = novel.NovelId;
             novelVM.NovelTitle = novel.NovelTitle;
-            novelVM.NovelCover = novel.NovelCover;
             novelVM.NovelDescription = novel.NovelDescription;
             novelVM.AuthorID = novel.AuthorId;
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novel.AuthorId);
+            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreName");
             //ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
             return View(novelVM);
         }
@@ -145,17 +145,41 @@ namespace WebNovel.Controllers
                 return NotFound();
             }
             Novel novel = new Novel();
-            novel = _context.Novels.Find(novelVM.NovelID); /* Vì dùng ModelState nên phải lấy data vào entity rồi edit.
-                                                            * Nếu không, các trường chưa có thông tin sẽ bị null*/
+            //novel = _context.Novels.Find(novelVM.NovelID);
+            /* Vì dùng ModelState nên phải lấy data vào entity rồi edit.
+            Nếu không, các trường chưa có thông tin sẽ bị null*/
+            novel = _context.Novels.Include("Genres").Single(n => n.NovelId == novelVM.NovelID);
+           
             if (ModelState.IsValid)
             {
-                //novel.NovelId = novelVM.NovelID;
                 novel.NovelTitle = novelVM.NovelTitle;
                 novel.NovelDescription = novelVM.NovelDescription;
-                novel.NovelCover = novelVM.NovelCover;
                 novel.AuthorId = novelVM.AuthorID;
+                List<int> listGenre = new List<int>();
+                listGenre = novelVM.GenreID;
+
+                foreach (var genre in novel.Genres.ToList())
+                {// Xóa những genre không match với listGenre mới
+                    if (!listGenre.Contains(genre.GenreId))
+                    {
+                        novel.Genres.Remove(genre);
+                    }
+                }
+
+                foreach (var newGenreId in listGenre)
+                {// Thêm genre mới mà không nằm trong list Genre cũ
+                    if(!novel.Genres.Any(g => g.GenreId == newGenreId))
+                    {
+                        var genre = new Genre();
+                        genre.GenreId = newGenreId;
+                        _context.Genres.Attach(genre); // Không biết tại sao dòng này xài được mà dòng dưới không xài được
+                        novel.Genres.Add(genre);
+                    }
+                }
+
                 try
                 {
+                    //_context.Novels.Attach(novel).State = EntityState.Added; // Dòng dưới
                     _context.Update(novel);
                     await _context.SaveChangesAsync();
                 }

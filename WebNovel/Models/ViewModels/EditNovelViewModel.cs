@@ -15,5 +15,7 @@ namespace WebNovel.Models.ViewModels
 
         [Required]
         public int AuthorID { get; set; }
+
+        public List<int> GenreID { get; set; }
     }
 }
