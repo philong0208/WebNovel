@@ -142,9 +142,15 @@ namespace WebNovel.Controllers
             {
                 return Problem("Entity set 'WebNovelContext.Genres'  is null.");
             }
-            var genre = await _context.Genres.FindAsync(id);
+            //var genre = await _context.Genres.FindAsync(id);
+            var genre = _context.Genres.Include("Novels").Single(g => g.GenreId == id);
             if (genre != null)
             {
+                if (genre.Novels.Count > 0)
+                {
+                    TempData["ErrorMessage"] = "Không thể xóa vì thể loại " + genre.GenreName + " đã có ít nhất 1 tiểu thuyết!";
+                    return RedirectToAction(nameof(Index));
+                }
                 _context.Genres.Remove(genre);
             }
             
