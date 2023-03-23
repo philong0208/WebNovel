@@ -142,9 +142,15 @@ namespace WebNovel.Controllers
             {
                 return Problem("Entity set 'WebNovelContext.Authors'  is null.");
             }
-            var author = await _context.Authors.FindAsync(id);
+            //var author = await _context.Authors.FindAsync(id);
+            var author = _context.Authors.Include("Novels").Single(a => a.AuthorId == id);
             if (author != null)
             {
+                if(author.Novels.Count > 0)
+                {
+                    TempData["ErrorMessage"] = "Không thể xóa vì tác giả " + author.AuthorName + " đã có ít nhất 1 tiểu thuyết!";
+                    return RedirectToAction(nameof(Index));
+                }
                 _context.Authors.Remove(author);
             }
             
