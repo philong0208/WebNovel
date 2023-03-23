@@ -127,7 +127,7 @@ namespace WebNovel.Controllers
             novelVM.AuthorID = novel.AuthorId;
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorName", novel.AuthorId);
             ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreName");
-            //ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
+            // Chỗ này để GET UserID
             return View(novelVM);
         }
 
@@ -148,7 +148,7 @@ namespace WebNovel.Controllers
             //novel = _context.Novels.Find(novelVM.NovelID);
             /* Vì dùng ModelState nên phải lấy data vào entity rồi edit.
             Nếu không, các trường chưa có thông tin sẽ bị null*/
-            novel = _context.Novels.Include("Genres").Single(n => n.NovelId == novelVM.NovelID);
+            novel = _context.Novels.Include("Genres").Single(n => n.NovelId == novelVM.NovelID); // Lấy genre của novels
            
             if (ModelState.IsValid)
             {
@@ -230,9 +230,15 @@ namespace WebNovel.Controllers
             {
                 return Problem("Entity set 'WebNovelContext.Novels'  is null.");
             }
-            var novel = await _context.Novels.FindAsync(id);
+            //var novel = await _context.Novels.FindAsync(id);
+            var novel = _context.Novels.Include("UserComments").Single(n => n.NovelId == id);
             if (novel != null)
             {
+                if(novel.UserComments.Count > 0)
+                {
+                    TempData["Message"] = "Không thể xóa tiểu thuyết do đã có bình luận";
+                    return RedirectToAction(nameof(Index));
+                }
                 _context.Novels.Remove(novel);
             }
             
