@@ -251,5 +251,11 @@ namespace WebNovel.Controllers
           return _context.Novels.Any(e => e.NovelId == id);
         }
 
+        [HttpGet("{novelId}")] //POST là lấy data từ form, GET là đưa data ra form.
+                               //Vì sử dụng Query parameter nên ở đây phải GET để truyền data qua form khác
+        public IActionResult CreateChapter(int novelId)
+        {
+            return RedirectToAction("Create", "Chapters", new {novelId});
+        }
     }
 }
