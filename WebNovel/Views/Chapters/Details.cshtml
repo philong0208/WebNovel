@@ -1,0 +1,42 @@
+﻿@model WebNovel.Models.Chapter
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Chapter</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ChapterTitle)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ChapterTitle)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ChapterContent)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ChapterContent)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ChapterDatePost)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ChapterDatePost)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Novel)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Novel.NovelId)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ChapterId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

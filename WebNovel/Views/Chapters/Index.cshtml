@@ -1,0 +1,53 @@
+﻿@model IEnumerable<WebNovel.Models.Chapter>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ChapterTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChapterContent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChapterDatePost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Novel)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChapterTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChapterContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChapterDatePost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Novel.NovelId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ChapterId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ChapterId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ChapterId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

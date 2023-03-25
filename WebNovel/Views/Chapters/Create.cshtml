@@ -1,0 +1,44 @@
+﻿@model WebNovel.Models.Chapter
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Chapter</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ChapterTitle" class="control-label"></label>
+                <input asp-for="ChapterTitle" class="form-control" />
+                <span asp-validation-for="ChapterTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChapterContent" class="control-label"></label>
+                <input asp-for="ChapterContent" class="form-control" />
+                <span asp-validation-for="ChapterContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChapterDatePost" class="control-label"></label>
+                <input asp-for="ChapterDatePost" class="form-control" />
+                <span asp-validation-for="ChapterDatePost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NovelId" class="control-label"></label>
+                <input asp-for="NovelId" class ="form-control visually-hidden" asp-items="ViewBag.NovelId"></input>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
