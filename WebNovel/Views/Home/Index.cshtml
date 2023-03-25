@@ -1,8 +1,56 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using WebNovel.Models.Pagination;
+@model IEnumerable<Novel>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@{
+    ViewData["Title"] = "Trang chủ";
+
+    Pager pager = new Pager();
+
+    int pageNumber = 0;
+
+    if(ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNumber = pager.CurrentPage;
+    }
+}
+<div class="text-center fw-bold">
+    <h1 class="display-4">Chào mừng đến với WebNovel</h1>
+</div>>
+<div>
+    <partial name="_Pager" model="@pager" />
+</div>
+<div class="list-group">
+    @foreach(var item in Model)
+    {
+        <div class="card border-info mb-3" style="max-width: 30rem;">
+            <a class="card-header" asp-controller="Novels" asp-action="Details" asp-route-id="@item.NovelId">@item.NovelTitle</a>
+            <div class="card-body">
+                <label asp-for="@item.NovelDatePost"></label>
+                <label>@item.NovelDatePost</label>
+                <br />
+                <label asp-for="@item.NovelView"></label>
+                <label>@item.NovelView</label>
+                <br/>
+                <label asp-for="@item.Author"></label>
+                <label>@item.Author.AuthorName</label>
+                <br/>
+                <label asp-for="@item.Genres"></label>
+                
+                @foreach(var genre in item.Genres)
+                {
+                    <label>@genre.GenreName</label>
+                    if(item.Genres.Count > 1)
+                    {
+                        <label>, </label>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
+<div>
+    <partial name="_Pager" model="@pager" />
+    <br/>
+    <br/>
 </div>
