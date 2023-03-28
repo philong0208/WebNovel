@@ -36,9 +36,12 @@ public partial class Novel
 
     public virtual User User { get; set; } = null!;
 
+    [DisplayName("Bình luận")]
     public virtual ICollection<UserComment> UserComments { get; } = new List<UserComment>();
 
+    [DisplayName("Đánh giá")]
     public virtual ICollection<UserRating> UserRatings { get; } = new List<UserRating>();
 
+    [DisplayName("Thể loại")]
     public virtual ICollection<Genre> Genres { get; } = new List<Genre>();
 }

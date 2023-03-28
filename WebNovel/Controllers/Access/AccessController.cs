@@ -36,12 +36,14 @@ namespace WebNovel.Controllers.Access
 
             foreach (User user in listUser)
             {
+                string MD5Password = UsersController.CreateMD5(loginViewModel.password);
                 if (loginViewModel.userID.Equals(user.UserId)
-                    && loginViewModel.password.Equals(user.UserPassword))
+                    && MD5Password.Equals(user.UserPassword))
                 {
                     List<Claim> claims = new List<Claim>()
                     {
-                        new Claim(ClaimTypes.NameIdentifier,loginViewModel.userID)
+                        new Claim(ClaimTypes.NameIdentifier, user.UserId),
+                        new Claim(ClaimTypes.Role, user.RoleId.ToString())
                     };
 
                     ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims,
@@ -63,6 +65,28 @@ namespace WebNovel.Controllers.Access
 
             ViewData["ValidateMessage"] = "Sai tên đăng nhập hoặc mật khẩu, hãy thữ lại!";
             return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Access");
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegistrationViewModel registrationViewModel)
+        {
+            if(ModelState.IsValid)
+            {
+
+            }    
+            return RedirectToAction("Index", "Home");
         }
     }
 }

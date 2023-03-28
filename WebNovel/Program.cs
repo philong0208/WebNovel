@@ -38,7 +38,19 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "chapters",
+    pattern: "{controller=Novels}/{action=CreateChapter}/{id?}"
+    );
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "novels",
+    pattern: "{controller=Novels}/{action=Index}/{id?}"
+    );
+
+
 
 app.Run();

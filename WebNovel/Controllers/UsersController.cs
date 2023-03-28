@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Users
+        [Authorize(Roles ="1")]
         public async Task<IActionResult> Index()
         {
             var webNovelContext = _context.Users.Include(u => u.Role);

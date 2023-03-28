@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebNovel.Models;
+using WebNovel.Models.ViewModels;
 
 namespace WebNovel.Controllers
 {
@@ -57,15 +58,20 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int novelId, Chapter chapter)
+        public async Task<IActionResult> Create(CreateChapterViewModel chapterVM)
         {
+            Chapter chapter = new Chapter();
             if (ModelState.IsValid)
             {
+                chapter.ChapterTitle = chapterVM.ChapterTitle;
+                chapter.ChapterContent = chapterVM.ChapterContent;
+                chapter.NovelId = chapterVM.NovelId;
+
                 _context.Add(chapter);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Novels", new { id = chapter.NovelId });
             }
-            ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
+            //ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
             return View(chapter);
         }
 
@@ -76,14 +82,16 @@ namespace WebNovel.Controllers
             {
                 return NotFound();
             }
-
+            EditChapterViewModel chapterViewModel = new EditChapterViewModel();
             var chapter = await _context.Chapters.FindAsync(id);
             if (chapter == null)
             {
                 return NotFound();
             }
-            ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
-            return View(chapter);
+            chapterViewModel.ChapterId = chapter.ChapterId;
+            chapterViewModel.ChapterTitle = chapter.ChapterTitle;
+            chapterViewModel.ChapterContent = chapter.ChapterContent;
+            return View(chapterViewModel);
         }
 
         // POST: Chapters/Edit/5
@@ -91,15 +99,19 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ChapterId,ChapterTitle,ChapterContent,ChapterDatePost,NovelId")] Chapter chapter)
+        public async Task<IActionResult> Edit(int id, EditChapterViewModel chapterVM)
         {
-            if (id != chapter.ChapterId)
+
+            if (id != chapterVM.ChapterId)
             {
                 return NotFound();
             }
 
+            Chapter chapter = new Chapter();
             if (ModelState.IsValid)
             {
+                chapter.ChapterTitle = chapterVM.ChapterTitle;
+                chapter.ChapterContent = chapterVM.ChapterContent;
                 try
                 {
                     _context.Update(chapter);
@@ -116,9 +128,9 @@ namespace WebNovel.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Novels", new { id = chapter.NovelId });
             }
-            ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
+            //ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
             return View(chapter);
         }
 

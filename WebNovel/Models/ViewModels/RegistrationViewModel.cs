@@ -15,6 +15,6 @@ namespace WebNovel.Models
         [Required]
         [Compare("UserPassword")]
         public string ConfirmPassword { get; set; }
-        public int RoleID { get; set; }
+        public int RoleID { get; set; } = 2;
     }
 }
