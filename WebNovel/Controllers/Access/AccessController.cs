@@ -84,7 +84,14 @@ namespace WebNovel.Controllers.Access
         {
             if(ModelState.IsValid)
             {
+                try
+                {
 
+                }
+                catch(DbUpdateException ex)
+                {
+                    TempData["RegistrationError"] = ex.ToString;
+                }
             }    
             return RedirectToAction("Index", "Home");
         }
