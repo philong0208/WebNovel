@@ -84,16 +84,45 @@ namespace WebNovel.Controllers.Access
         {
             if(ModelState.IsValid)
             {
+                User user = new User();
                 try
                 {
+                    if (!UserExists(registrationViewModel.UserID))
+                    {
+                        user.UserId = registrationViewModel.UserID;
+                        user.UserEmail = registrationViewModel.UserEmail;
+                        user.UserName = registrationViewModel.UserName;
+                        user.UserPassword = UsersController.CreateMD5(registrationViewModel.UserPassword);
+                        user.RoleId = registrationViewModel.RoleID;
 
+                        _context.Add(user);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        TempData["RegistrationError"] = "ID đã tồn tại, vui lòng chọn ID khác!";
+                        return View(registrationViewModel);
+                    }
                 }
                 catch(DbUpdateException ex)
                 {
-                    TempData["RegistrationError"] = ex.ToString;
+                    TempData["RegistrationError"] = "Tạo tài khoản thất bại, hãy thử lại!";
+                    return View(registrationViewModel);
                 }
-            }    
-            return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return View(registrationViewModel);
+            }
+            TempData["RegistrationError"] = "Tạo tài khoản thất bại, hãy thử lại!";
+            return View();
         }
+
+        private bool UserExists(string id)
+        {
+            return _context.Users.Any(e => e.UserId == id);
+        }
+
     }
 }

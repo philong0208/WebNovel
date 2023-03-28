@@ -65,15 +65,22 @@ namespace WebNovel.Controllers
             User user = new User();
             if (ModelState.IsValid)
             {
-                user.UserId = userVM.UserID;
-                user.UserEmail = userVM.Email;
-                user.UserName = userVM.UserName;
-                user.UserPassword = CreateMD5("1234");
-                user.RoleId = userVM.RoleID;
+                if(UserExists(userVM.UserID))
+                {
+                    user.UserId = userVM.UserID;
+                    user.UserEmail = userVM.Email;
+                    user.UserName = userVM.UserName;
+                    user.UserPassword = CreateMD5("1234");
+                    user.RoleId = userVM.RoleID;
 
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["AddUserError"] = "ID đã tồn tại, vui lòng chọn ID khác!";
+                }
             }
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", user.RoleId);
             return View(user);

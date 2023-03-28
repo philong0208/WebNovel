@@ -6,35 +6,40 @@
 
 <div>
     <form class="w-25" asp-controller="Access" asp-action="Register" method="post">
-        <h1>ĐĂNG NHẬP</h1>
+        <h1>ĐĂNG KÝ</h1>
         <hr />
         <fieldset>
             <div class="form-group">
                 <label asp-for="UserID" class="form-label mt-4">ID người dùng:</label>
                 <input type="text" class="form-control" placeholder="ID người dùng" asp-for="UserID">
+                <span asp-validation-for="UserID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UserPassword" class="form-label mt-4">Mật khẩu:</label>
                 <input type="password" class="form-control" asp-for="UserPassword">
+                <span asp-validation-for="UserPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ConfirmPassword" class="form-label mt-4">Xác nhận mật khẩu:</label>
                 <input type="password" class="form-control" asp-for="ConfirmPassword">
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserEmail" class="form-label mt-4">Email</label>
+                <label asp-for="UserEmail" class="form-label mt-4">Email:</label>
                 <input type="email" class="form-control" placeholder="User123@gmail.com" asp-for="UserEmail">
+                <span asp-validation-for="UserEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UserName" class="form-label mt-4">Tên người dùng:</label>
                 <input type="text" class="form-control" placeholder="Nguyễn Văn A" asp-for="UserName">
+                <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
-            @if (ViewData["ValidateMessage"] != null)
+            @if (ViewData["RegistrationError"] != null)
             {
                 <br />
                 <br />
-                <label class="alert-danger">@ViewData["ValidateMessage"]</label>
+                <label class="alert-danger">@ViewData["RegistrationError"]</label>
             }
         </fieldset>
     </form>
