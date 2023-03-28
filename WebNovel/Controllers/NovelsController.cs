@@ -39,10 +39,21 @@ namespace WebNovel.Controllers
             var novel = await _context.Novels
                 .Include(n => n.Author)
                 .Include(n => n.User)
+                .Include(n => n.Genres)
                 .FirstOrDefaultAsync(m => m.NovelId == id);
+            
             if (novel == null)
             {
                 return NotFound();
+            }
+            try
+            {
+                novel.NovelView += 1;
+                _context.Update(novel);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
             }
 
             return View(novel);
