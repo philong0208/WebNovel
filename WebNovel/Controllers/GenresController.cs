@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +44,7 @@ namespace WebNovel.Controllers
             return View(genre);
         }
 
+        [Authorize(Roles = "1")]
         // GET: Genres/Create
         public IActionResult Create()
         {
@@ -65,6 +68,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Genres/Edit/5
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Genres == null)
@@ -116,6 +120,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Genres/Delete/5
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Genres == null)

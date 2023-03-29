@@ -48,6 +48,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Users/Create
+        [Authorize(Roles = "1")]
         public IActionResult Create()
         {
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName");
@@ -87,6 +88,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.Users == null)
@@ -140,6 +142,7 @@ namespace WebNovel.Controllers
             return View(user);
         }
 
+        [Authorize(Roles = "1")]
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
@@ -160,6 +163,7 @@ namespace WebNovel.Controllers
         }
 
         // POST: Users/Delete/5
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)

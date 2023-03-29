@@ -1,4 +1,5 @@
 ﻿@model WebNovel.Models.Chapter
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Details";
@@ -39,4 +40,15 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.ChapterId">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+<div>
+    @{
+        if (User.Identity.IsAuthenticated) 
+        {
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model?.ChapterId">Edit</a> |
+                <a asp-action="Index">Back to List</a>
+            </div>
+        }
+    }
 </div>

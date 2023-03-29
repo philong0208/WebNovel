@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -63,6 +64,7 @@ namespace WebNovel.Controllers
 
         // GET: Novels/Create
         [HttpGet]
+        [Authorize]
         public IActionResult Create()
         {
             ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName");
@@ -121,6 +123,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Novels/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Novels == null)
@@ -215,6 +218,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Novels/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Novels == null)
