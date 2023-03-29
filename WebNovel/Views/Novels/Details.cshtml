@@ -1,4 +1,5 @@
 ﻿@model Novel
+@using System.Security.Claims;
 
 @{
     ViewData["Title"] = "Details";
@@ -23,16 +24,29 @@
             @Html.DisplayFor(model => model.NovelDescription)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NovelCover)
+            @Html.DisplayNameFor(model => model.Genres)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NovelCover)
+            @{
+                if(Model.Genres != null)
+                {
+                    foreach (var genre in Model.Genres)
+                    {
+                        <label>@genre.GenreName</label>
+                        if (Model.Genres.Count > 1)
+                        {
+                            <label>, </label>
+                        }
+                    }
+                }
+                
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.NovelDatePost)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NovelDatePost)
+            @Html.DisplayFor(model => model.NovelDatePost.Date)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.NovelView)
@@ -44,23 +58,72 @@
             @Html.DisplayNameFor(model => model.Author)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author.AuthorId)
+            @Html.DisplayFor(model => model.Author.AuthorName)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.UserId)
+            @Html.DisplayFor(model => model.User.UserName)
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NovelId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
 
+<hr />
 <div>
-    <p>
-        @Html.ActionLink("Thêm chương mới", "CreateChapter", "Novels", new { novelId = Model.NovelId, })
-    </p>
+    @{
+        // Dùng để xác định người nào đăng novel này
+            // Chỉ người nào đăng mới được edit novel | thêm chapter
+        if (User.Identity.IsAuthenticated) // Xác định đã có người đăng nhập hay chưa
+        {
+            ClaimsPrincipal currentUser = this.User;
+            var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            // Lấy ID người đăng nhập hiện tại
+            if (Model.User.UserId.Equals(currentUserID)) // So sánh với ID người đăng novel (novel poster)
+            {
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model?.NovelId">Edit</a> |
+                    <a asp-action="Index">Back to List</a>
+                </div>
+                <div>
+                    <p>
+                        @Html.ActionLink("Thêm chương mới", "CreateChapter", "Novels", new { novelId = Model.NovelId, })
+                    </p>
+                </div>
+            }
+        }
+    }
+</div>
+<hr />
+<div> @*List chapters*@
+    <label>Chương truyện</label>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                   Tiêu đề
+                </th>
+                <th>
+                    Ngày đăng
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var chapter in Model.Chapters)
+            {
+                <tr>
+                    <td>
+                        @*<a asp-controller="Novels" asp-action="ChapterDetails" asp-route-id="@chapter.ChapterId">
+                            @Html.DisplayFor(modelItem => chapter.ChapterTitle)
+                        </a>*@
+                        @Html.ActionLink(chapter.ChapterTitle, "ChapterDetails", "Novels", new { novelId = Model.NovelId, chapter.ChapterId })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => chapter.ChapterDatePost)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

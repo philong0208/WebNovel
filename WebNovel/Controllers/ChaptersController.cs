@@ -45,6 +45,25 @@ namespace WebNovel.Controllers
             return View(chapter);
         }
 
+        // GET: Novel/1/Chapters/Details/5
+        public async Task<IActionResult> getDetailsByNovelId(int? novelId, int? chapterId)
+        {
+            if (chapterId == null || _context.Chapters == null)
+            {
+                return NotFound();
+            }
+
+            var chapter = await _context.Chapters
+                .Include(c => c.Novel)
+                .FirstOrDefaultAsync(m => m.ChapterId == chapterId);
+            if (chapter == null)
+            {
+                return NotFound();
+            }
+
+            return View("Details", chapter);
+        }
+
         // GET: Chapters/Create
         public IActionResult Create(int novelId)
         {

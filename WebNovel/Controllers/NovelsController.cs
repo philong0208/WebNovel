@@ -40,6 +40,7 @@ namespace WebNovel.Controllers
                 .Include(n => n.Author)
                 .Include(n => n.User)
                 .Include(n => n.Genres)
+                .Include(n => n.Chapters)
                 .FirstOrDefaultAsync(m => m.NovelId == id);
             
             if (novel == null)
@@ -55,6 +56,7 @@ namespace WebNovel.Controllers
             catch (DbUpdateException ex)
             {
             }
+            
 
             return View(novel);
         }
@@ -264,10 +266,16 @@ namespace WebNovel.Controllers
 
         // POST là lấy data từ form, GET là đưa data ra form.
         // Vì sử dụng Query parameter nên ở đây phải GET để truyền data qua form khác
-        [HttpGet("novels/{novelId}/chapters/{id?}")] 
+        [HttpGet("novels/{novelId}/chapters")] 
         public IActionResult CreateChapter([FromRoute]int novelId)
         {
             return RedirectToAction("Create", "Chapters", new {novelId});
+        }
+                        
+        [HttpGet("novels/{novelId}/chapters/{chapterId}")] // I have no idea how routing works, it just, works...
+        public IActionResult ChapterDetails([FromRoute]int novelId, [FromRoute]int chapterId)
+        {
+            return RedirectToAction("getDetailsByNovelId", "Chapters", new { novelId, chapterId });
         }
     }
 }
