@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WebNovel.Models;
@@ -16,6 +17,40 @@ namespace WebNovel.Controllers
             _context = context;
         }
 
+        public List<Novel> getSortedListNovels(string SortProperty, SortOder SortOder)
+        {
+            List<Novel> novels = _context.Novels
+                .Include(n => n.Author)
+                .Include(n => n.Genres)
+                .Include(n => n.Chapters)
+                .AsQueryable().ToList();
+
+            if(SortProperty.ToLower() == "title")
+            {
+                if(SortOder == SortOder.Ascending)
+                {
+                    novels = novels.OrderBy(n => n.NovelTitle).ToList();
+                }
+                else
+                {
+                    novels = novels.OrderByDescending(n => n.NovelTitle).ToList() ;
+                }
+            }
+            else
+            {
+                if (SortOder == SortOder.Ascending)
+                {
+                    novels = novels.OrderBy(n => n.NovelDatePost).ToList();
+                }
+                else
+                {
+                    novels = novels.OrderByDescending(n => n.NovelDatePost).ToList();
+                }
+            }
+
+            return novels;
+        }
+
         public async Task<IActionResult> Index(string searchText = "", int pg = 1, int pageSize = 5)
         {
             var webNovelContext = _context.Novels
@@ -23,8 +58,6 @@ namespace WebNovel.Controllers
                 .Include(n => n.Genres)
                 .Include(n => n.Chapters)
                 .AsQueryable();
-
-            //List<Novel> novels = _context.Novels.ToList();
 
             //const int pageSize = 5;
             if (pg < 1) { 

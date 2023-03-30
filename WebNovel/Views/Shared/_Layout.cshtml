@@ -36,6 +36,21 @@
                         }
                     </ul>
 
+                    <div class="d-flex me-3">
+                        <ul class="navbar-nav flex-grow-1">
+                            @{
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    ClaimsPrincipal currentUser = this.User;
+                                    var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+                                    <li class="nav-item ">
+                                        <a class="nav-link" asp-controller="Users" asp-action="Details" asp-route-id="@currentUserID">@currentUserID</a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>    
+
                     <div class="d-flex">
                         @{
                             if (User.Identity.IsAuthenticated)
