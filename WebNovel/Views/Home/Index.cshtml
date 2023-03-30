@@ -23,7 +23,7 @@
 <div class="list-group">
     @foreach(var item in Model)
     {
-        <div class="card border-info mb-3" style="max-width: 30rem;">
+        <div class="card border-info mb-3" style="max-width: 100%;">
             <a class="card-header" asp-controller="Novels" asp-action="Details" asp-route-id="@item.NovelId">@item.NovelTitle</a>
             <div class="card-body">
                 <label asp-for="@item.NovelDatePost"></label>
