@@ -58,6 +58,7 @@ namespace WebNovel.Controllers.Access
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity), properties);
 
+                    TempData["success"] = "Đăng nhập thành công";
                     return RedirectToAction("Index", "Home");
                 }
                 //TempData["Error"] = "Sai tên đăng nhập hoặc mật khẩu, hãy thữ lại!";
@@ -70,6 +71,7 @@ namespace WebNovel.Controllers.Access
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["error"] = "Đăng xuất thành công";
             return RedirectToAction("Login", "Access");
         }
 
@@ -105,18 +107,14 @@ namespace WebNovel.Controllers.Access
                         return View(registrationViewModel);
                     }
                 }
-                catch(DbUpdateException ex)
+                catch(DbUpdateException)
                 {
                     TempData["RegistrationError"] = "Tạo tài khoản thất bại, hãy thử lại!";
                     return View(registrationViewModel);
                 }
             }
-            else
-            {
-                return View(registrationViewModel);
-            }
             TempData["RegistrationError"] = "Tạo tài khoản thất bại, hãy thử lại!";
-            return View();
+            return View(registrationViewModel);
         }
 
         private bool UserExists(string id)
