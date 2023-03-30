@@ -11,7 +11,7 @@ namespace WebNovel.Models
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Email không được để trống")]
-        [RegularExpression("^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)$", ErrorMessage = "Email không hợp lệ")]
+        [RegularExpression("^[A-Za-z0-9+_.-]+@(.+)$", ErrorMessage = "Email không hợp lệ")]
         public string UserEmail { get; set; }
 
         [Required(ErrorMessage = "Mật khẩu không được để trống")]

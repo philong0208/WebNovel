@@ -16,12 +16,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="UserPassword" class="form-label mt-4">Mật khẩu:</label>
-                <input type="password" class="form-control" asp-for="UserPassword">
+                <input type="password" class="form-control" asp-for="UserPassword" placeholder="Mật khẩu">
                 <span asp-validation-for="UserPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ConfirmPassword" class="form-label mt-4">Xác nhận mật khẩu:</label>
-                <input type="password" class="form-control" asp-for="ConfirmPassword">
+                <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Xác nhận mật khẩu">
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,7 +34,7 @@
                 <input type="text" class="form-control" placeholder="Nguyễn Văn A" asp-for="UserName">
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Đăng ký</button>
             @if (ViewData["RegistrationError"] != null)
             {
                 <br />
