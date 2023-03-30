@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebNovel.Models.ViewModels
 {
-    public class UserViewModel
+    public class CreateUserViewModel
     {
         [Required]
         public string UserID { get; set; }

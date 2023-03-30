@@ -52,7 +52,7 @@ namespace WebNovel.Controllers
         public IActionResult Create()
         {
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleName");
-            UserViewModel userVM = new UserViewModel();
+            CreateUserViewModel userVM = new CreateUserViewModel();
             return View(userVM);
         }
 
@@ -61,7 +61,7 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserViewModel userVM)
+        public async Task<IActionResult> Create(CreateUserViewModel userVM)
         {
             User user = new User();
             if (ModelState.IsValid)
@@ -90,7 +90,7 @@ namespace WebNovel.Controllers
         }
 
         // GET: Users/Edit/5
-        [Authorize(Roles = "1")]
+        [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.Users == null)
@@ -99,12 +99,18 @@ namespace WebNovel.Controllers
             }
 
             var user = await _context.Users.FindAsync(id);
+            var userVM = new EditUserViewModel();
+            userVM.UserID = user.UserId;
+            userVM.UserName = user.UserName;
+            userVM.oldPassword = "";
+            userVM.Email = user.UserEmail;
+            userVM.RoleID = user.RoleId;
             if (user == null)
             {
                 return NotFound();
             }
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", user.RoleId);
-            return View(user);
+            return View(userVM);
         }
 
         // POST: Users/Edit/5
@@ -112,7 +118,7 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id,UserViewModel userVM)
+        public async Task<IActionResult> Edit(string id, EditUserViewModel userVM)
         {
             if (id != userVM.UserID)
             {
@@ -120,8 +126,22 @@ namespace WebNovel.Controllers
             }
 
             User user = new User();
+            user = _context.Users.Single(n => n.UserId == userVM.UserID);
             if (ModelState.IsValid)
             {
+                var oldPassword = CreateMD5(userVM.oldPassword);
+                var newPassword = CreateMD5(userVM.newPassword);
+
+                if(!user.UserPassword.Equals(oldPassword))
+                {
+                    TempData["error"] = "Sai mật khẩu cũ";
+                    return View(userVM);
+                }    
+                
+                user.UserName = userVM.UserName;
+                user.UserEmail = userVM.Email;
+                user.UserPassword = newPassword;
+
                 try
                 {
                     _context.Update(user);
@@ -139,11 +159,11 @@ namespace WebNovel.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = user.UserId });
             }
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", user.RoleId);
             TempData["error"] = "Sửa thông tin người dùng thất bại";
-            return View(user);
+            return View(userVM);
         }
 
         [Authorize(Roles = "1")]
