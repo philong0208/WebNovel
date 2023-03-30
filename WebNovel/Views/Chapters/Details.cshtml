@@ -5,50 +5,57 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h4>@Html.DisplayFor(model => model.ChapterTitle)</h4>
 
 <div>
-    <h4>Chapter</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChapterTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChapterTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChapterContent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChapterContent)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChapterDatePost)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChapterDatePost)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Novel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Novel.NovelId)
-        </dd>
-    </dl>
+    <div class ="d-flex justify-content-around">
+        <div>
+            <label class="fw-bold">
+                Ngày đăng:
+            </label>
+            <label>
+                @Html.DisplayFor(model => model.ChapterDatePost)
+            </label>
+        </div>
+        <div>
+            <label class="fw-bold">
+                Tiểu thuyết:
+            </label>
+            <label>
+                @Html.DisplayFor(model => model.Novel.NovelTitle)
+            </label>
+        </div>
+        <div>
+            <label class="fw-bold">
+                Người đăng:
+            </label>
+            <label>
+                @Html.DisplayFor(model => model.Novel.UserId)
+            </label>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ChapterId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
 <div>
     @{
         if (User.Identity.IsAuthenticated) 
         {
-            <div>
-                <a asp-action="Edit" asp-route-id="@Model?.ChapterId">Edit</a> |
-                <a asp-action="Index">Back to List</a>
-            </div>
+            ClaimsPrincipal currentUser = this.User; 
+            var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            // Lấy ID người đăng nhập hiện tại
+            if(Model.Novel.UserId.Equals(currentUserID))
+            {
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model?.ChapterId">Edit</a> |
+                    <a asp-action="Index">Back to List</a>
+                </div>
+            }
+            
         }
     }
+</div>
+<div>
+    <hr />
+    @Html.DisplayFor(model => model.ChapterContent)
 </div>
