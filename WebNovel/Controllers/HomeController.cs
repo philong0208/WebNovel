@@ -9,7 +9,7 @@ namespace WebNovel.Controllers
     public class HomeController : Controller
     {
         private readonly WebNovelContext _context;
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
 
         public HomeController(WebNovelContext context)
         {

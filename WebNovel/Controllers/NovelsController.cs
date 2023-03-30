@@ -69,7 +69,7 @@ namespace WebNovel.Controllers
                 _context.Update(novel);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
             }
             
@@ -129,7 +129,7 @@ namespace WebNovel.Controllers
                     ModelState.AddModelError("", "Không thể thêm.Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
                 }
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 TempData["error"] = "Thêm tiểu thuyết mới thất bại";
                 ModelState.AddModelError("", "Không thể thêm. Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
