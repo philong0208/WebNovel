@@ -19,10 +19,10 @@
                 @Html.DisplayNameFor(model => model.NovelDescription)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NovelCover)
+                @Html.DisplayNameFor(model => model.NovelDatePost)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NovelDatePost)
+                @Html.DisplayNameFor(model => model.Genres)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.NovelView)
@@ -46,16 +46,23 @@
                 @Html.DisplayFor(modelItem => item.NovelDescription)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NovelCover)
+                @Html.DisplayFor(modelItem => item.NovelDatePost)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NovelDatePost)
+                    @foreach (var genre in item.Genres)
+                    {
+                            <label>@genre.GenreName</label>
+                        if (item.Genres.Count > 1)
+                        {
+                                    <label>, </label>
+                        }
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NovelView)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author.AuthorId)
+                @Html.DisplayFor(modelItem => item.Author.AuthorName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.User.UserId)
