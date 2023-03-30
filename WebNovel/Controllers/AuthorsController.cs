@@ -62,8 +62,10 @@ namespace WebNovel.Controllers
             {
                 _context.Add(author);
                 await _context.SaveChangesAsync();
+                TempData["success"] = "Thêm mới tác giả thành công";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["error"] = "Thêm tác giả thất bại";
             return View(author);
         }
 
@@ -102,6 +104,7 @@ namespace WebNovel.Controllers
                 {
                     _context.Update(author);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Sửa tác giả thành công";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -114,6 +117,7 @@ namespace WebNovel.Controllers
                         throw;
                     }
                 }
+                TempData["error"] = "Sửa tác giả thất bại";
                 return RedirectToAction(nameof(Index));
             }
             return View(author);
@@ -153,9 +157,10 @@ namespace WebNovel.Controllers
             {
                 if(author.Novels.Count > 0)
                 {
-                    TempData["ErrorMessage"] = "Không thể xóa vì tác giả " + author.AuthorName + " đã có ít nhất 1 tiểu thuyết!";
+                    TempData["error"] = "Không thể xóa vì tác giả " + author.AuthorName + " đã có ít nhất 1 tiểu thuyết!";
                     return RedirectToAction(nameof(Index));
                 }
+                TempData["success"] = "Xóa tác giả thành công";
                 _context.Authors.Remove(author);
             }
             

@@ -76,6 +76,7 @@ namespace WebNovel.Controllers
 
                     _context.Add(user);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Thêm người dung mới thành công";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -84,6 +85,7 @@ namespace WebNovel.Controllers
                 }
             }
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", user.RoleId);
+            TempData["error"] = "Thêm người dùng thất bại";
             return View(user);
         }
 
@@ -124,6 +126,7 @@ namespace WebNovel.Controllers
                 {
                     _context.Update(user);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Sửa thông tin người dùng thành công";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -139,6 +142,7 @@ namespace WebNovel.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", user.RoleId);
+            TempData["error"] = "Sửa thông tin người dùng thất bại";
             return View(user);
         }
 
@@ -172,13 +176,18 @@ namespace WebNovel.Controllers
             {
                 return Problem("Entity set 'WebNovelContext.Users'  is null.");
             }
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            var user = _context.Users.Include("Novels").Single(u => u.UserId == id);
             {
+                if (user.Novels.Count > 0)
+                {
+                    TempData["error"] = "Không thể xóa vì người dùng " + user.UserId + " đã có ít nhất 1 tiểu thuyết!";
+                    return RedirectToAction(nameof(Index));
+                }
                 _context.Users.Remove(user);
             }
             
             await _context.SaveChangesAsync();
+            TempData["success"] = "Xóa người dùng thành công";
             return RedirectToAction(nameof(Index));
         }
 

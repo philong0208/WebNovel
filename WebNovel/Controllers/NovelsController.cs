@@ -93,8 +93,6 @@ namespace WebNovel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[DisableRequestSizeLimit]
-        //[RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> Create(CreateNovelViewModel novelVM)
         {
             Novel novel = new Novel();
@@ -121,21 +119,25 @@ namespace WebNovel.Controllers
                     }
                     _context.Novels.Attach(novel).State = EntityState.Added;
                     _context.Add(novel);
+                    TempData["success"] = "Thêm tiểu thuyết mới thành công";
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
+                    TempData["error"] = "Thêm tiểu thuyết mới thất bại";
                     ModelState.AddModelError("", "Không thể thêm.Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
                 }
             }
             catch (DbUpdateException ex)
             {
+                TempData["error"] = "Thêm tiểu thuyết mới thất bại";
                 ModelState.AddModelError("", "Không thể thêm. Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
             }
             ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName", novelVM.AuthorID);
             
             ViewBag.GenreId = new SelectList(_context.Genres, "GenreId", "GenreName");
+            TempData["error"] = "Thêm tiểu thuyết mới thất bại";
             return View(novel);
         }
 
@@ -215,6 +217,7 @@ namespace WebNovel.Controllers
                     //_context.Novels.Attach(novel).State = EntityState.Added; // Dòng dưới
                     _context.Update(novel);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Sửa tiểu thuyết thành công";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -230,7 +233,8 @@ namespace WebNovel.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", novel.AuthorId);
-            //ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", novel.UserId);
+            
+            TempData["success"] = "Sửa tiểu thuyết thành công";
             return View(novelVM);
         }
 
@@ -270,13 +274,14 @@ namespace WebNovel.Controllers
             {
                 if(novel.UserComments.Count > 0)
                 {
-                    TempData["Message"] = "Không thể xóa tiểu thuyết do đã có bình luận";
+                    TempData["error"] = "Không thể xóa tiểu thuyết do đã có bình luận";
                     return RedirectToAction(nameof(Index));
                 }
                 _context.Novels.Remove(novel);
             }
             
             await _context.SaveChangesAsync();
+            TempData["success"] = "Xóa tiểu thuyết thành công";
             return RedirectToAction(nameof(Index));
         }
 

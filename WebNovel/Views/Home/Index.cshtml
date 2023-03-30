@@ -14,10 +14,24 @@
         pageNumber = pager.CurrentPage;
     }
 }
+
 <div class="text-center fw-bold">
     <h1 class="display-4">Chào mừng đến với WebNovel</h1>
-</div>>
+</div>
+
 <div>
+    <div class="col-4 p-0 justify-content-end mt-1">
+        <form asp-action="Index">
+            <span class="btn-group">
+                <input class="form-control" type="text"
+                       name="searchText" 
+                       value="@ViewBag.SearchText"
+                       placeholder="Tìm tên tiểu thuyết"/>
+                <input class="p-1 ml-2 btn btn-primary" style="border-radius:10px;"
+                type = "submit" value="Search"/>
+            </span>
+        </form>
+    </div>
     <partial name="_Pager" model="@pager" />
 </div>
 <div class="list-group">
@@ -26,17 +40,16 @@
         <div class="card border-info mb-3" style="max-width: 100%;">
             <a class="card-header" asp-controller="Novels" asp-action="Details" asp-route-id="@item.NovelId">@item.NovelTitle</a>
             <div class="card-body">
-                <label asp-for="@item.NovelDatePost"></label>
+                <label>Ngày đăng:</label>
                 <label>@item.NovelDatePost</label>
                 <br />
-                <label asp-for="@item.NovelView"></label>
+                <label>Lượt xem:</label>
                 <label>@item.NovelView</label>
                 <br/>
-                <label asp-for="@item.Author"></label>
+                <label>Tác giả</label>
                 <label>@item.Author.AuthorName</label>
                 <br/>
                 <label asp-for="@item.Genres"></label>
-                
                 @foreach(var genre in item.Genres)
                 {
                     <label>@genre.GenreName</label>
@@ -45,6 +58,9 @@
                         <label>, </label>
                     }
                 }
+                <br/>
+                <label>Số chương:</label>
+                <label>@item.Chapters.Count</label>
             </div>
         </div>
     }

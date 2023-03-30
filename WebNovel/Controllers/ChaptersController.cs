@@ -92,8 +92,10 @@ namespace WebNovel.Controllers
 
                 _context.Add(chapter);
                 await _context.SaveChangesAsync();
+                TempData["success"] = "Thêm chương mới thành công";
                 return RedirectToAction("Details", "Novels", new { id = chapter.NovelId });
             }
+            TempData["error"] = "Thêm tác giả thất bại";
             //ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
             return View(chapter);
         }
@@ -139,6 +141,7 @@ namespace WebNovel.Controllers
                 {
                     _context.Update(chapter);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Sửa nội dung chương thành công";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -151,6 +154,7 @@ namespace WebNovel.Controllers
                         throw;
                     }
                 }
+                TempData["error"] = "Sửa nội dung chương thất bại";
                 return RedirectToAction("Details", "Novels", new { id = chapter.NovelId });
             }
             //ViewData["NovelId"] = new SelectList(_context.Novels, "NovelId", "NovelId", chapter.NovelId);
@@ -192,6 +196,7 @@ namespace WebNovel.Controllers
             }
             
             await _context.SaveChangesAsync();
+            TempData["success"] = "Xóa chương thành công";
             return RedirectToAction(nameof(Index));
         }
 

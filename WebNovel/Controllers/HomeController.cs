@@ -18,7 +18,11 @@ namespace WebNovel.Controllers
 
         public async Task<IActionResult> Index(string searchText = "", int pg = 1, int pageSize = 5)
         {
-            var webNovelContext = _context.Novels.Include(n => n.Author).Include(n => n.Genres).AsQueryable();
+            var webNovelContext = _context.Novels
+                .Include(n => n.Author)
+                .Include(n => n.Genres)
+                .Include(n => n.Chapters)
+                .AsQueryable();
 
             //List<Novel> novels = _context.Novels.ToList();
 
@@ -29,7 +33,7 @@ namespace WebNovel.Controllers
 
             if (searchText != "" && searchText != null)
             {
-                webNovelContext = _context.Novels.Include(n => n.Author).Include(n => n.Genres)
+                webNovelContext = webNovelContext
                     .Where(p => p.NovelTitle.Contains(searchText))
                     .AsQueryable();
             }
@@ -45,7 +49,6 @@ namespace WebNovel.Controllers
             //List<Novel> returnListNovel = await webNovelContext.Skip(recordSkip).Take(pageSize).ToListAsync();
             
             this.ViewBag.Pager = pager;
-
 
             //return View(await webNovelContext.ToListAsync());
 

@@ -62,8 +62,10 @@ namespace WebNovel.Controllers
             {
                 _context.Add(genre);
                 await _context.SaveChangesAsync();
+                TempData["success"] = "Thêm thể loại mới thành công";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["error"] = "Thêm thể loại thất bại";
             return View(genre);
         }
 
@@ -101,6 +103,7 @@ namespace WebNovel.Controllers
                 try
                 {
                     _context.Update(genre);
+                    TempData["success"] = "Sửa thể loại thành công";
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -116,6 +119,7 @@ namespace WebNovel.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            TempData["success"] = "Sửa thể loại thất bại";
             return View(genre);
         }
 
@@ -153,13 +157,14 @@ namespace WebNovel.Controllers
             {
                 if (genre.Novels.Count > 0)
                 {
-                    TempData["ErrorMessage"] = "Không thể xóa vì thể loại " + genre.GenreName + " đã có ít nhất 1 tiểu thuyết!";
+                    TempData["error"] = "Không thể xóa vì thể loại " + genre.GenreName + " đã có ít nhất 1 tiểu thuyết!";
                     return RedirectToAction(nameof(Index));
                 }
                 _context.Genres.Remove(genre);
             }
             
             await _context.SaveChangesAsync();
+            TempData["success"] = "Xóa thể loại thành công";
             return RedirectToAction(nameof(Index));
         }
 

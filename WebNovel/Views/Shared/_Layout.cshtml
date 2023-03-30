@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApplicationForTesting.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 </head>
 <body>
     <header>
@@ -21,13 +22,16 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         @{
-                            if (User.IsInRole("1"))
+                            if(User.Identity.IsAuthenticated)
                             {
-                                <partial name="_AdminLayout.cshtml"></partial>
-                            }
-                            else if (User.IsInRole("2"))
-                            {
-                                <partial name="_UserLayout.cshtml"></partial>
+                                if (User.IsInRole("1"))
+                                {
+                                    <partial name="_AdminLayout.cshtml"></partial>
+                                }
+                                else if (User.IsInRole("2"))
+                                {
+                                    <partial name="_UserLayout.cshtml"></partial>
+                                }
                             }
                         }
                     </ul>
@@ -54,6 +58,8 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notification.cshtml"></partial>
+
             @RenderBody()
         </main>
     </div>
