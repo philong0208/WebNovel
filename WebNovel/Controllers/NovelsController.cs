@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using WebNovel.Models;
@@ -26,6 +28,19 @@ namespace WebNovel.Controllers
         public async Task<IActionResult> Index()
         {
             var webNovelContext = _context.Novels.Include(n => n.Author).Include(n => n.User);
+            if (User.Identity.IsAuthenticated) // Xác định đã có người đăng nhập hay chưa
+            {
+                ClaimsPrincipal currentUser = this.User;
+                var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value; // Lấy ID người đăng nhập hiện tại
+                var currentUserRole = currentUser.FindFirst(ClaimTypes.Role).Value; // Lấy Role người đăng nhập hiện tại
+                if(currentUserRole != "1")
+                {
+                    var userNovels = from n in _context.Novels.Include(n => n.Author).Include(n => n.User).Include(n => n.Genres)
+                                     where n.UserId == currentUserID
+                                     select n;
+                    return View(await userNovels.ToListAsync());
+                }
+            }
             return View(await webNovelContext.ToListAsync());
         }
 
@@ -68,7 +83,7 @@ namespace WebNovel.Controllers
         public IActionResult Create()
         {
             ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName");
-            ViewBag.UserId = new SelectList(_context.Users, "UserId", "UserId");
+            
             ViewBag.GenreId = new SelectList(_context.Genres, "GenreId", "GenreName");
             return View();
         }
@@ -87,13 +102,15 @@ namespace WebNovel.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    
-                    //byte[] uploadedFile = new byte[novelVM.NovelCover.Length];
                     novel.NovelTitle = novelVM.NovelTitle;
-                    novel.NovelCover = "";
+                    novel.NovelCover = ""; // Bằng cách nào đó không thể upload được file
                     novel.NovelDescription = novelVM.NovelDescription;
                     novel.AuthorId = novelVM.AuthorID;
-                    novel.UserId = novelVM.UserID;
+                    
+                    ClaimsPrincipal currentUser = this.User;
+                    var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value; // Lấy ID người đăng nhập hiện tại
+                    novel.UserId = currentUserID;
+
                     List<int> list = novelVM.GenreId;
 
                     foreach (var genreId in list)
@@ -117,7 +134,7 @@ namespace WebNovel.Controllers
                 ModelState.AddModelError("", "Không thể thêm. Hãy thử lại, nếu vấn đề còn tồn tại, liên hệ người có chuyên môn.");
             }
             ViewBag.AuthorId = new SelectList(_context.Authors, "AuthorId", "AuthorName", novelVM.AuthorID);
-            ViewBag.UserId = new SelectList(_context.Users, "UserId", "UserId", novelVM.UserID);
+            
             ViewBag.GenreId = new SelectList(_context.Genres, "GenreId", "GenreName");
             return View(novel);
         }

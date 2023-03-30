@@ -5,18 +5,14 @@ namespace WebNovel.Models.ViewModels
 {
     public class CreateNovelViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Tiêu đề không được để trống")]
         public String NovelTitle { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Phải mô tả nội dung sơ lược")]
         public String NovelDescription { get; set; }
-        //[Required]
-        //public string NovelCover { get; set; }
-
-        [Required]
-        public string UserID { get; set; }
-        [Required]
+        
+        [Required(ErrorMessage = "Hãy chọn tác giả")]
         public int AuthorID { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Hãy chọn ít nhất 1 thể loại")]
         public List<int> GenreId { get; set; }
     }
 }
