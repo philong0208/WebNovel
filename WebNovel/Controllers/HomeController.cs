@@ -17,40 +17,6 @@ namespace WebNovel.Controllers
             _context = context;
         }
 
-        public List<Novel> getSortedListNovels(string SortProperty, SortOder SortOder)
-        {
-            List<Novel> novels = _context.Novels
-                .Include(n => n.Author)
-                .Include(n => n.Genres)
-                .Include(n => n.Chapters)
-                .AsQueryable().ToList();
-
-            if(SortProperty.ToLower() == "title")
-            {
-                if(SortOder == SortOder.Ascending)
-                {
-                    novels = novels.OrderBy(n => n.NovelTitle).ToList();
-                }
-                else
-                {
-                    novels = novels.OrderByDescending(n => n.NovelTitle).ToList() ;
-                }
-            }
-            else
-            {
-                if (SortOder == SortOder.Ascending)
-                {
-                    novels = novels.OrderBy(n => n.NovelDatePost).ToList();
-                }
-                else
-                {
-                    novels = novels.OrderByDescending(n => n.NovelDatePost).ToList();
-                }
-            }
-
-            return novels;
-        }
-
         public async Task<IActionResult> Index(string searchText = "", int pg = 1, int pageSize = 5)
         {
             var webNovelContext = _context.Novels
@@ -78,12 +44,8 @@ namespace WebNovel.Controllers
             int recordSkip = (pg - 1) * pageSize;
 
             List<Novel> data = await webNovelContext.Skip(recordSkip).Take(pager.PageSize).ToListAsync();
-
-            //List<Novel> returnListNovel = await webNovelContext.Skip(recordSkip).Take(pageSize).ToListAsync();
             
             this.ViewBag.Pager = pager;
-
-            //return View(await webNovelContext.ToListAsync());
 
             return View(data);
         }

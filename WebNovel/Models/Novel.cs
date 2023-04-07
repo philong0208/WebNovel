@@ -19,7 +19,8 @@ public partial class Novel
     public string NovelCover { get; set; } = null!;
 
     [DisplayName("Ngày đăng")]
-    public DateTime NovelDatePost { get; set; } = DateTime.Now;
+    [DataType(DataType.Date)]
+    public DateTime NovelDatePost { get; set; }
 
     [DisplayName("Lượt xem")]
     public int NovelView { get; set; } = 1;

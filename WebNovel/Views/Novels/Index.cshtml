@@ -7,7 +7,7 @@
 <h1>Danh sách tiểu thuyết</h1>
 
 <p>
-    <a asp-action="Create">Thêm mới</a>
+    <a class="btn btn-success" asp-action="Create">Thêm mới</a>
 </p>
 <table class="table">
     <thead>
@@ -28,10 +28,10 @@
                 @Html.DisplayNameFor(model => model.NovelView)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                Tác giả
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                Người đăng
             </th>
             <th></th>
         </tr>
@@ -42,13 +42,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.NovelTitle)
             </td>
-            <td>
+                <td class="col-2 text-truncate" style="max-width: 150px">
                 @Html.DisplayFor(modelItem => item.NovelDescription)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NovelDatePost)
             </td>
-            <td>
+            <td style="max-width: 200px">
                     @foreach (var genre in item.Genres)
                     {
                             <label>@genre.GenreName</label>
@@ -68,9 +68,9 @@
                 @Html.DisplayFor(modelItem => item.User.UserId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.NovelId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.NovelId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.NovelId">Delete</a>
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.NovelId">Sửa</a> |
+                <a class="btn btn-info" asp-action="Details" asp-route-id="@item.NovelId">Chi tiết</a> |
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.NovelId">Xóa</a>
             </td>
         </tr>
 }

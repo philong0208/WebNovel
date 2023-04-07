@@ -27,7 +27,11 @@ namespace WebNovel.Controllers
         // GET: Novels
         public async Task<IActionResult> Index()
         {
-            var webNovelContext = _context.Novels.Include(n => n.Author).Include(n => n.User);
+            var webNovelContext = _context.Novels
+                .Include(n => n.Author)
+                .Include(n => n.User)
+                .Include(n => n.Genres);
+
             if (User.Identity.IsAuthenticated) // Xác định đã có người đăng nhập hay chưa
             {
                 ClaimsPrincipal currentUser = this.User;
@@ -41,6 +45,7 @@ namespace WebNovel.Controllers
                     return View(await userNovels.ToListAsync());
                 }
             }
+
             return View(await webNovelContext.ToListAsync());
         }
 

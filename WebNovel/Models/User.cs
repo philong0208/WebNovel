@@ -7,7 +7,7 @@ namespace WebNovel.Models;
 
 public partial class User
 {
-    [DisplayName("Tên đăng nhập")]
+    [DisplayName("Tên tài khoản")]
     public string UserId { get; set; } = null!;
 
     [DisplayName("Họ và tên")]

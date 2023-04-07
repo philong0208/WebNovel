@@ -19,7 +19,7 @@
     <h1 class="display-4">Chào mừng đến với WebNovel</h1>
 </div>
 
-<div>
+<div class="justify-content-between">
     <div class="col-4 p-0 justify-content-end mt-1">
         <form asp-action="Index">
             <span class="btn-group">
@@ -40,16 +40,16 @@
         <div class="card border-info mb-3" style="max-width: 100%;">
             <a class="card-header" asp-controller="Novels" asp-action="Details" asp-route-id="@item.NovelId">@item.NovelTitle</a>
             <div class="card-body">
-                <label>Ngày đăng:</label>
-                <label>@item.NovelDatePost</label>
+                <label>Ngày đăng: </label>
+                <label>@item.NovelDatePost.ToShortDateString()</label>
                 <br />
-                <label>Lượt xem:</label>
+                <label>Lượt xem: </label>
                 <label>@item.NovelView</label>
                 <br/>
-                <label>Tác giả</label>
+                <label>Tác giả: </label>
                 <label>@item.Author.AuthorName</label>
                 <br/>
-                <label asp-for="@item.Genres"></label>
+                <label>Thể loại: </label>
                 @foreach(var genre in item.Genres)
                 {
                     <label>@genre.GenreName</label>
@@ -59,7 +59,7 @@
                     }
                 }
                 <br/>
-                <label>Số chương:</label>
+                <label>Số chương: </label>
                 <label>@item.Chapters.Count</label>
             </div>
         </div>
